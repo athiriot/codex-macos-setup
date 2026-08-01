@@ -39,6 +39,16 @@ codex --version
 
 If that works, add the same PATH line to `~/.zprofile`.
 
+## `code: command not found`
+
+Open Visual Studio Code, press `Cmd+Shift+P`, run `Shell Command: Install 'code' command in PATH`, then open a new terminal window.
+
+To install one extension manually:
+
+```sh
+code --install-extension openai.chatgpt
+```
+
 ## Xcode Command Line Tools Did Not Finish
 
 Run:

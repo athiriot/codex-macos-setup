@@ -2,7 +2,7 @@
 
 Guided bootstrap for a new macOS user preparing a terminal-first Codex environment.
 
-This repo is private for now. The goal is to keep the setup simple enough that it can later be shared publicly with minimal cleanup.
+This repo is public. The goal is to keep the setup simple enough that new users can follow it with minimal hand-holding.
 
 ## Quickstart
 
@@ -26,6 +26,14 @@ Preview the actions first:
 - Adds Homebrew shell setup to `~/.zprofile` when approved.
 - Installs core CLI tools: `git` and `gh`.
 - Optionally installs iTerm2, Visual Studio Code, and Obsidian.
+- When Visual Studio Code is selected, installs a small recommended extension set:
+  - Codex: `openai.chatgpt`
+  - GitLens: `eamodio.gitlens`
+  - Git Graph: `mhutchie.git-graph`
+  - GitHub Pull Requests and Issues: `GitHub.vscode-pull-request-github`
+  - GitHub Actions: `GitHub.vscode-github-actions`
+  - EditorConfig: `editorconfig.editorconfig`
+  - Code Spell Checker: `streetsidesoftware.code-spell-checker`
 - Optionally installs Oh My Zsh without changing the current shell.
 - Installs Codex CLI using the official standalone installer.
 - Adds `~/.local/bin` to PATH when needed.
@@ -77,5 +85,7 @@ It does not install Rosetta or try to force Intel Homebrew on Apple Silicon. If 
 - Codex CLI authentication: `codex login`
 - Codex auth check: `codex login status`
 - Homebrew installer: `https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh`
+- VS Code extension CLI: `code --install-extension <publisher.extension>`
+- Codex VS Code extension: `https://marketplace.visualstudio.com/items?itemName=OpenAI.chatgpt`
 
 See [docs/fresh-mac-checklist.md](docs/fresh-mac-checklist.md) for a beginner-friendly run order and [docs/troubleshooting.md](docs/troubleshooting.md) when a command is not found or auth fails.

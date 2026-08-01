@@ -16,9 +16,19 @@ BREW_BIN=""
 BREW_PREFIX=""
 EXPECTED_BREW_PREFIX=""
 ARCH="$(uname -m)"
+CODE_BIN=""
 
 CORE_FORMULAE=(git gh)
 KNOWN_APPS=(iterm2 visual-studio-code obsidian)
+VSCODE_EXTENSIONS=(
+  openai.chatgpt
+  eamodio.gitlens
+  mhutchie.git-graph
+  GitHub.vscode-pull-request-github
+  GitHub.vscode-github-actions
+  editorconfig.editorconfig
+  streetsidesoftware.code-spell-checker
+)
 
 usage() {
   cat <<'EOF'
@@ -334,17 +344,78 @@ ensure_cask() {
   fi
 }
 
+find_vscode_cli() {
+  if command_exists code; then
+    CODE_BIN="$(command -v code)"
+  elif [[ -x "$BREW_PREFIX/bin/code" ]]; then
+    CODE_BIN="$BREW_PREFIX/bin/code"
+  elif [[ -x "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]]; then
+    CODE_BIN="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+  elif [[ -x "$HOME/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]]; then
+    CODE_BIN="$HOME/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+  else
+    CODE_BIN=""
+  fi
+}
+
+vscode_extension_installed() {
+  local extension="$1"
+  local installed
+  local installed_extensions=("${(@f)$("$CODE_BIN" --list-extensions 2>/dev/null)}")
+
+  for installed in "${installed_extensions[@]}"; do
+    [[ "${installed:l}" == "${extension:l}" ]] && return 0
+  done
+  return 1
+}
+
+ensure_vscode_extension() {
+  local extension="$1"
+  if [[ "$DRY_RUN" -eq 0 ]] && vscode_extension_installed "$extension"; then
+    log "VS Code extension already installed: $extension"
+  else
+    run_cmd "Install VS Code extension: $extension" "$CODE_BIN" --install-extension "$extension"
+  fi
+}
+
+ensure_vscode_extensions() {
+  find_vscode_cli
+
+  if [[ -z "$CODE_BIN" && "$DRY_RUN" -eq 1 ]]; then
+    CODE_BIN="code"
+  fi
+
+  if [[ -z "$CODE_BIN" ]]; then
+    warn "Visual Studio Code is installed, but the code CLI was not found. Open VS Code and run \"Shell Command: Install 'code' command in PATH\", then install extensions with 'code --install-extension <publisher.extension>'."
+    return
+  fi
+
+  local extension
+  for extension in "${VSCODE_EXTENSIONS[@]}"; do
+    ensure_vscode_extension "$extension"
+  done
+}
+
+ensure_optional_app() {
+  local app="$1"
+  ensure_cask "$app"
+
+  if [[ "$app" == "visual-studio-code" ]]; then
+    ensure_vscode_extensions
+  fi
+}
+
 install_optional_apps() {
   [[ "$CORE_ONLY" -eq 1 ]] && return
 
   local app
   for app in "${KNOWN_APPS[@]}"; do
     if contains "$app" "${WITH_APPS[@]}"; then
-      ensure_cask "$app"
+      ensure_optional_app "$app"
       continue
     fi
     if ask_yes_no "Install optional app $app?" "n"; then
-      ensure_cask "$app"
+      ensure_optional_app "$app"
     else
       log "Skipped optional app: $app"
     fi

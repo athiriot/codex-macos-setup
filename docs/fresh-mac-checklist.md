@@ -29,7 +29,7 @@ Read the planned actions. If the machine is fresh, the script may say that Xcode
 Choose optional apps based on the person:
 
 - iTerm2 for a better terminal.
-- Visual Studio Code for a friendly editor.
+- Visual Studio Code for a friendly editor. The installer also adds recommended VS Code extensions for Codex, Git, GitHub, EditorConfig, and spell checking.
 - Obsidian if they will keep local notes or knowledge bases.
 
 ## Minimal Install
